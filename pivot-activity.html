@@ -230,7 +230,7 @@
 <!-- Progress -->
 <div class="progress-wrap">
   <div class="progress-bg"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-  <span class="progress-label" id="progressLabel">Step 1 of 6</span>
+  <span class="progress-label" id="progressLabel">Step 1 of 5</span>
 </div>
 
 <!-- Main scenario card -->
@@ -238,7 +238,7 @@
 
   <!-- Step counter -->
   <div class="step-counter" id="stepCounter">
-    Step 1 of 6 — Task A: In Progress
+    Step 1 of 5 — Task A: In Progress
   </div>
 
   <!-- Situation bar -->
@@ -308,7 +308,6 @@
         <button class="action-btn btn-primary" id="btnSaveClose"   onclick="handleClick('saveclose')">Save &amp; Close</button>
         <button class="action-btn btn-default" id="btnSaveNew"     onclick="handleClick('savenew')">Save &amp; New</button>
         <button class="action-btn btn-default" id="btnSaveDup"     onclick="handleClick('savedup')">Save &amp; Duplicate</button>
-        <button class="action-btn btn-default" id="btnAddTime"     onclick="handleClick('addtime')">Add Time</button>
         <button class="action-btn btn-cancel"  id="btnCancel"      onclick="handleClick('cancel')">Cancel</button>
       </div>
     </div>
@@ -349,7 +348,7 @@
 <script>
   const steps = [
     {
-      counter: 'Step 1 of 6 — Task A: In Progress',
+      counter: 'Step 1 of 5 — Task A: In Progress',
       counterClass: '',
       icon: '📋',
       situation: 'You have been reviewing medical records for <strong>Hernandez, M.</strong> since 9:00 AM. Your Bill4Time entry is open and the timer is running.',
@@ -369,27 +368,15 @@
       }
     },
     {
-      counter: 'Step 2 of 6 — Task A: Save & Close',
-      counterClass: '',
-      icon: '💾',
-      situation: 'Get Time has stamped <strong>10:22am</strong> as the end time on Task A. The entry is complete and ready to save.',
-      situationClass: '',
-      prompt: '❓ <strong>Task A is fully filled in.</strong> You need to close this entry so you can open a new one for the client call. Click the correct button.',
-      correctBtn: 'saveclose',
-      correctFeedback: '✓ Correct! <strong>Save & Close</strong> saves Task A and closes the form. Task A is now fully logged and you are free to handle the interruption.',
-      wrongFeedback: '✕ Not quite. Task A is complete — you need to save and close it before opening a new entry. Click <strong>Save & Close</strong>.',
-      formUpdate: () => {}
-    },
-    {
-      counter: 'Step 3 of 6 — Task B: Open New Entry',
+      counter: 'Step 2 of 5 — Task B: Open New Entry',
       counterClass: 'interrupt-bar',
       icon: '📞',
-      situation: 'Task A is saved. <strong>Patel, R. is on the phone</strong> — you need to open a new time entry to log this inbound client call.',
+      situation: 'Get Time has stamped <strong>10:22am</strong> as the end time on Task A. <strong>Patel, R. is on the phone</strong> — you need to save Task A and open a new entry for the call in one step.',
       situationClass: 'interrupt',
-      prompt: '❓ <strong>Task A is closed.</strong> You need to start a fresh entry for the urgent task. Click the correct button to open a new entry.',
-      correctBtn: 'addtime',
-      correctFeedback: '✓ Correct! <strong>Add Time</strong> opens a brand new time entry form. Fill in the client (Patel, R.), matter, and activity (Client Communication) for the call.',
-      wrongFeedback: '✕ Not quite. You need to open a brand new entry for the interrupting task. Click <strong>Add Time</strong>.',
+      prompt: '❓ <strong>Task A end time is stamped.</strong> You need to save it and immediately open a fresh entry for the urgent task. Click the correct button.',
+      correctBtn: 'savenew',
+      correctFeedback: '✓ Correct! <strong>Save & New</strong> saves Task A and immediately opens a blank new entry form — ready for you to fill in Patel, R.\'s client call details.',
+      wrongFeedback: '✕ Not quite. You need to save Task A and open a new entry in one step. Click <strong>Save & New</strong>.',
       formUpdate: () => {
         document.getElementById('clientField').textContent = 'Patel, R.';
         document.getElementById('clientField').className = 'f-input blue-val';
@@ -407,7 +394,7 @@
       }
     },
     {
-      counter: 'Step 4 of 6 — Task B: Stamp End Time',
+      counter: 'Step 3 of 5 — Task B: Stamp End Time',
       counterClass: 'interrupt-bar',
       icon: '📞',
       situation: 'The call with <strong>Patel, R.</strong> is finished. Your Task B entry is open with a start time of 10:22am. You need to stamp the end time.',
@@ -426,7 +413,7 @@
       }
     },
     {
-      counter: 'Step 5 of 6 — Task B: Save & Close',
+      counter: 'Step 4 of 5 — Task B: Save & Close',
       counterClass: 'interrupt-bar',
       icon: '💾',
       situation: 'Task B is fully filled in — client, matter, activity, description, start time <strong>10:22am</strong>, end time <strong>10:45am</strong>. Ready to save.',
@@ -438,15 +425,15 @@
       formUpdate: () => {}
     },
     {
-      counter: 'Step 6 of 6 — Task A: Resume',
+      counter: 'Step 5 of 5 — Task A: Resume',
       counterClass: 'resume-bar',
       icon: '🔄',
       situation: 'Task B is saved. You are back to your <strong>original Task A window</strong> (Medical Record Review, Hernandez, M.). You need to resume with a new start time.',
       situationClass: '',
       prompt: '❓ <strong>You are ready to continue Task A.</strong> Open a new entry for the remaining work. Click the correct button to resume.',
-      correctBtn: 'addtime',
-      correctFeedback: '✓ Correct! <strong>Add Time</strong> opens a new entry for Task A with a fresh start time of 10:45am — the moment you resumed. Task A will now have two entries that together capture all the time you worked.',
-      wrongFeedback: '✕ Not quite. You need to open a new entry to continue Task A from where you left off. Click <strong>Add Time</strong>.',
+      correctBtn: 'savenew',
+      correctFeedback: '✓ Correct! <strong>Save & New</strong> opens a fresh entry for Task A with a new start time of 10:45am — the moment you resumed. Task A will now have two entries that together capture all the time you worked.',
+      wrongFeedback: '✕ Not quite. You need to open a new entry to continue Task A from where you left off. Click <strong>Save & New</strong>.',
       formUpdate: () => {
         document.getElementById('clientField').textContent = 'Hernandez, M.';
         document.getElementById('matterField').textContent = 'SLS-2026-0441';
@@ -467,8 +454,8 @@
   let currentStep = 0;
   let answered = false;
 
-  const correctMap = { 0:'gettime', 1:'saveclose', 2:'addtime', 3:'gettime', 4:'saveclose', 5:'addtime' };
-  const btnIds = { saveclose:'btnSaveClose', savenew:'btnSaveNew', savedup:'btnSaveDup', gettime:'btnGetTime', addtime:'btnAddTime', cancel:'btnCancel' };
+  const correctMap = { 0:'gettime', 1:'savenew', 2:'gettime', 3:'saveclose', 4:'savenew' };
+  const btnIds = { saveclose:'btnSaveClose', savenew:'btnSaveNew', savedup:'btnSaveDup', gettime:'btnGetTime', cancel:'btnCancel' };
   // btnGetTime is inline next to End Time — still included in btnIds for disable/highlight logic
 
   function applyStep(idx) {
