@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pivoting Mid-Task – Practice Activity</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #e8edf2;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    font-size: 13px;
+    color: #333;
+    padding: 20px 16px 40px;
+  }
+
+  /* ── Page header ── */
+  .page-header {
+    background: #1e4da1;
+    border-radius: 4px 4px 0 0;
+    padding: 11px 18px;
+    max-width: 780px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .page-header h1 { font-size: 14px; font-weight: 700; color: #fff; }
+  .page-header .badge {
+    font-size: 10px; font-weight: 600;
+    background: rgba(255,255,255,0.18); color: #fff;
+    padding: 3px 10px; border-radius: 10px;
+  }
+
+  .page-sub {
+    background: #c8d8e8; border: 1px solid #a8b8cc;
+    border-top: none; border-radius: 0 0 4px 4px;
+    padding: 9px 18px; max-width: 780px;
+    font-size: 12px; color: #333; line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    max-width: 780px; margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .progress-bg { flex: 1; height: 6px; background: #ccc; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #1e4da1; border-radius: 3px; transition: width 0.4s ease; }
+  .progress-label { font-size: 11px; color: #777; white-space: nowrap; }
+
+  /* ── Scenario card ── */
+  .scenario-card {
+    background: #fff; border: 1px solid #bbb;
+    border-radius: 4px; max-width: 780px;
+    overflow: hidden; margin-bottom: 14px;
+  }
+
+  /* Situation bar */
+  .situation-bar {
+    background: #f7f7f7; border-bottom: 1px solid #ddd;
+    padding: 8px 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .situation-icon { font-size: 16px; flex-shrink: 0; }
+  .situation-text { font-size: 12px; color: #333; line-height: 1.4; }
+  .situation-text strong { color: #1e4da1; }
+  .situation-text.interrupt strong { color: #c03030; }
+
+  /* Step counter */
+  .step-counter {
+    background: #1e4da1; color: #fff;
+    font-size: 11px; font-weight: 700;
+    padding: 6px 14px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .step-counter.interrupt-bar { background: #c03030; }
+  .step-counter.resume-bar   { background: #1a5a1a; }
+
+  /* ── Bill4Time form mockup ── */
+  .b4t-wrap { padding: 14px; }
+
+  .b4t-form { background: #fff; border: 1px solid #bbb; border-radius: 3px; overflow: hidden; }
+  .form-topbar {
+    background: #1e4da1; color: #fff;
+    font-size: 12px; font-weight: 600;
+    padding: 7px 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .form-topbar .timer { font-size: 11px; font-weight: 400; opacity: 0.85; }
+
+  .form-grid {
+    padding: 10px 14px 6px;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0 24px; border-bottom: 1px solid #ececec;
+  }
+  .form-col { display: flex; flex-direction: column; }
+  .form-row {
+    display: flex; align-items: center;
+    padding: 3px 0; border-bottom: 1px solid #f4f4f4;
+    min-height: 24px; gap: 6px;
+  }
+  .form-row:last-child { border-bottom: none; }
+  .form-label { font-size: 11px; color: #666; width: 130px; flex-shrink: 0; text-align: right; padding-right: 8px; }
+  .f-input {
+    display: inline-block; background: #f5f5f5;
+    border: 1px solid #ccc; border-radius: 2px;
+    padding: 2px 7px; font-size: 11px; color: #333; min-width: 100px;
+  }
+  .f-input.blue-val { color: #1e4da1; font-weight: 600; background: #eef3fb; border-color: #b0c4e8; }
+  .f-input.filled   { background: #e8f5e8; border-color: #70b870; color: #1a5a1a; font-weight: 600; }
+  .f-input.empty-dash { color: #bbb; font-style: italic; background: #fafafa; }
+  .f-input.highlight { background: #fff8dc; border-color: #e0c060; color: #7a5000; font-weight: 600; }
+  .f-input.running  { color: #c03030; font-style: italic; background: #fff5f5; border-color: #f0b0b0; }
+  .f-select { display: inline-block; background: #f5f5f5; border: 1px solid #ccc; border-radius: 2px; padding: 2px 16px 2px 7px; font-size: 11px; color: #333; min-width: 120px; }
+  .f-check { display: flex; align-items: center; gap: 4px; font-size: 11px; }
+  .f-check input { width: 11px; height: 11px; accent-color: #1e4da1; }
+
+  /* Description */
+  .desc-section { padding: 8px 14px 6px; border-bottom: 1px solid #ececec; }
+  .desc-label { font-size: 11px; color: #666; margin-bottom: 4px; }
+  .desc-box {
+    background: #e8edf5; border: 1px solid #b0bcd0;
+    border-radius: 2px; font-size: 11px; color: #333;
+    padding: 6px 9px; min-height: 36px; line-height: 1.5;
+  }
+
+  /* Time / labor fields */
+  .form-time { padding: 8px 14px 6px; display: grid; grid-template-columns: 1fr 1fr; gap: 0 24px; }
+
+  /* ── Action buttons (the interactive part) ── */
+  .form-buttons {
+    background: #f0f0f0; border-top: 1px solid #ddd;
+    padding: 8px 12px;
+    display: flex; justify-content: flex-end; gap: 7px; flex-wrap: wrap;
+  }
+
+  .action-btn {
+    font-size: 11px; font-weight: 700;
+    padding: 5px 14px; border-radius: 3px;
+    border: 2px solid transparent;
+    cursor: pointer; transition: all 0.15s;
+    position: relative;
+  }
+  .action-btn.btn-primary  { background: #1e4da1; color: #fff; border-color: #1a3d80; }
+  .action-btn.btn-default  { background: #e8e8e8; color: #555; border-color: #bbb; }
+  .action-btn.btn-cancel   { background: #fff;    color: #777; border-color: #ccc; }
+  .action-btn.btn-green    { background: #1a5a1a; color: #fff; border-color: #145014; }
+
+  .action-btn.correct-target {
+    animation: pulse 1.4s infinite;
+    border-color: #ffec00 !important;
+    box-shadow: 0 0 0 3px rgba(255,236,0,0.3);
+  }
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 0 0 3px rgba(255,236,0,0.3); }
+    50%      { box-shadow: 0 0 0 6px rgba(255,236,0,0.1); }
+  }
+
+  .action-btn:disabled { opacity: 0.45; cursor: not-allowed; animation: none; box-shadow: none; border-color: transparent !important; }
+  .action-btn:not(:disabled):hover { filter: brightness(1.1); }
+
+  /* ── Feedback toast ── */
+  .feedback-toast {
+    display: none;
+    margin: 0 14px 12px;
+    padding: 9px 12px;
+    border-radius: 3px;
+    font-size: 12px; line-height: 1.5;
+  }
+  .feedback-toast.correct { background: #e8f5e8; border: 1px solid #80c080; color: #1a4a1a; }
+  .feedback-toast.wrong   { background: #fde8e8; border: 1px solid #e08080; color: #6a1a1a; }
+
+  /* ── Prompt box ── */
+  .prompt-box {
+    background: #eef3fb; border: 1px solid #b0c4e8;
+    border-radius: 3px; padding: 10px 14px;
+    margin: 0 14px 12px;
+    font-size: 12px; color: #1a2a5a; line-height: 1.5;
+  }
+  .prompt-box strong { font-weight: 700; }
+  .prompt-box .q-icon { font-size: 14px; margin-right: 6px; }
+
+  /* ── Next button ── */
+  .next-btn {
+    display: none;
+    margin: 0 14px 14px;
+    font-size: 12px; font-weight: 700;
+    padding: 7px 20px; border-radius: 3px;
+    border: none; background: #1e4da1; color: #fff;
+    cursor: pointer;
+  }
+  .next-btn:hover { background: #1a3d80; }
+
+  /* ── Complete card ── */
+  .complete-card {
+    display: none;
+    background: #fff; border: 1px solid #bbb;
+    border-radius: 4px; max-width: 780px;
+    overflow: hidden;
+  }
+  .complete-top { background: #1a5a1a; color: #fff; font-size: 13px; font-weight: 700; padding: 10px 16px; }
+  .complete-body { padding: 18px 20px; }
+  .complete-body h3 { font-size: 13px; font-weight: 700; color: #111; margin-bottom: 10px; }
+  .result-row { display: flex; gap: 14px; margin-top: 10px; }
+  .result-entry {
+    flex: 1; background: #f7f7f7; border: 1px solid #ccc;
+    border-radius: 3px; overflow: hidden;
+  }
+  .result-entry .re-head { font-size: 11px; font-weight: 700; padding: 5px 10px; color: #fff; }
+  .re-head.blue { background: #1e4da1; }
+  .re-head.red  { background: #c03030; }
+  .result-entry .re-body { padding: 8px 10px; font-size: 11px; color: #444; line-height: 1.6; }
+  .re-body strong { color: #111; }
+  .re-body .ok { color: #1a5a1a; font-weight: 600; }
+
+  .complete-footer { background: #f0f0f0; border-top: 1px solid #ddd; padding: 8px 14px; display: flex; justify-content: flex-end; }
+  .restart-btn { font-size: 11px; font-weight: 600; padding: 5px 14px; border-radius: 3px; border: 1px solid #bbb; background: #e8e8e8; color: #333; cursor: pointer; }
+  .restart-btn:hover { background: #ddd; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Practice Activity — Pivoting Mid-Task</h1>
+  <span class="badge">Interactive</span>
+</div>
+<div class="page-sub">
+  <strong>Scenario:</strong> You are reviewing medical records for Hernandez, M. when a client — Patel, R. — calls unexpectedly. Work through each step by clicking the correct button in Bill4Time. The button you should click will be highlighted.
+</div>
+
+<!-- Progress -->
+<div class="progress-wrap">
+  <div class="progress-bg"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  <span class="progress-label" id="progressLabel">Step 1 of 6</span>
+</div>
+
+<!-- Main scenario card -->
+<div class="scenario-card" id="scenarioCard">
+
+  <!-- Step counter -->
+  <div class="step-counter" id="stepCounter">
+    Step 1 of 6 — Task A: In Progress
+  </div>
+
+  <!-- Situation bar -->
+  <div class="situation-bar" id="situationBar">
+    <span class="situation-icon">📋</span>
+    <div class="situation-text" id="situationText">
+      You have been reviewing medical records for <strong>Hernandez, M.</strong> since 9:00 AM. Your Bill4Time entry is open and the timer is running.
+    </div>
+  </div>
+
+  <!-- Prompt -->
+  <div class="prompt-box" id="promptBox">
+    <span class="q-icon">❓</span><strong>What should you do next?</strong> Your phone is ringing — Patel, R. is calling. Before you answer, you need to stamp the end time on Task A. Click the correct button below.
+  </div>
+
+  <!-- Bill4Time form -->
+  <div class="b4t-wrap">
+    <div class="b4t-form">
+      <div class="form-topbar">
+        New Time Entry
+        <span class="timer" id="timerDisplay">▶ 01:22:14</span>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-col">
+          <div class="form-row"><div class="form-label">For User:</div><span class="f-input">Johnson, Sarah</span></div>
+          <div class="form-row"><div class="form-label">Client:</div><span class="f-input blue-val" id="clientField">Hernandez, M.</span></div>
+          <div class="form-row"><div class="form-label">Matter:</div><span class="f-input blue-val" id="matterField">SLS-2026-0441</span></div>
+          <div class="form-row"><div class="form-label">Activity:</div><span class="f-select" id="activityField">Medical Rec. Review</span></div>
+        </div>
+        <div class="form-col">
+          <div class="form-row"><div class="form-label">Entry Type:</div><span class="f-select">Hourly Work</span></div>
+          <div class="form-row"><div class="form-label">Overtime:</div><label class="f-check"><input type="checkbox" disabled></label></div>
+          <div class="form-row"><div class="form-label">Billable:</div><label class="f-check"><input type="checkbox" checked disabled></label></div>
+          <div class="form-row"><div class="form-label">Exclude From Invoice:</div><label class="f-check"><input type="checkbox" disabled></label></div>
+          <div class="form-row"><div class="form-label">Date Created:</div><span style="font-size:11px;font-weight:600;">09/22/2026</span></div>
+        </div>
+      </div>
+
+      <div class="desc-section">
+        <div class="desc-label">Private Description:</div>
+        <div class="desc-box" id="descField">Reviewed medical records received from treating physician for Matter SLS-2026-0441 (Hernandez, Maria); updated Medical History tab in Litify and drafted medical record summary.</div>
+      </div>
+
+      <div class="form-time">
+        <div class="form-col">
+          <div class="form-row"><div class="form-label">Date of Work:</div><span class="f-input">09/22/2026</span></div>
+          <div class="form-row"><div class="form-label">Start Time:</div><span class="f-input blue-val" id="startField">9:00am</span></div>
+          <div class="form-row">
+            <div class="form-label">End Time:</div>
+            <span class="f-input running" id="endField">running…</span>
+            <button class="action-btn btn-default" id="btnGetTime" onclick="handleClick('gettime')" style="font-size:10px;padding:2px 10px;margin-left:6px;">Get Time</button>
+          </div>
+        </div>
+        <div class="form-col">
+          <div class="form-row"><div class="form-label">Labor Time (hrs):</div><span class="f-input empty-dash" id="laborField">—</span></div>
+          <div class="form-row"><div class="form-label">Rate $:</div><span class="f-input">0.00</span></div>
+          <div class="form-row"><div class="form-label">Billable (hrs):</div><span class="f-input empty-dash" id="billableField">—</span></div>
+        </div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="feedback-toast" id="feedbackToast"></div>
+
+      <!-- Action buttons -->
+      <div class="form-buttons" id="buttonRow">
+        <button class="action-btn btn-primary" id="btnSaveClose"   onclick="handleClick('saveclose')">Save &amp; Close</button>
+        <button class="action-btn btn-default" id="btnSaveNew"     onclick="handleClick('savenew')">Save &amp; New</button>
+        <button class="action-btn btn-default" id="btnSaveDup"     onclick="handleClick('savedup')">Save &amp; Duplicate</button>
+        <button class="action-btn btn-default" id="btnAddTime"     onclick="handleClick('addtime')">Add Time</button>
+        <button class="action-btn btn-cancel"  id="btnCancel"      onclick="handleClick('cancel')">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <button class="next-btn" id="nextBtn" onclick="nextStep()">Continue to next step →</button>
+</div>
+
+<!-- Complete card -->
+<div class="complete-card" id="completeCard">
+  <div class="complete-top">✓ Activity Complete — Well Done!</div>
+  <div class="complete-body">
+    <h3>You correctly handled the mid-task pivot. Here are the two entries that were logged:</h3>
+    <div class="result-row">
+      <div class="result-entry">
+        <div class="re-head blue">Entry 1 — Task A (Medical Record Review)</div>
+        <div class="re-body">
+          <strong>Hernandez, M.</strong> — SLS-2026-0441<br>
+          9:00am – 10:22am &nbsp;+&nbsp; 10:45am – 12:30pm<br>
+          <span class="ok">✓ Two entries, both accurately timed around the interruption</span>
+        </div>
+      </div>
+      <div class="result-entry">
+        <div class="re-head red">Entry 2 — Task B (Client Communication)</div>
+        <div class="re-body">
+          <strong>Patel, R.</strong> — SLS-2026-0389<br>
+          10:22am – 10:45am<br>
+          <span class="ok">✓ Inbound call captured with correct start and end time</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="complete-footer">
+    <button class="restart-btn" onclick="restart()">Start Over</button>
+  </div>
+</div>
+
+<script>
+  const steps = [
+    {
+      counter: 'Step 1 of 6 — Task A: In Progress',
+      counterClass: '',
+      icon: '📋',
+      situation: 'You have been reviewing medical records for <strong>Hernandez, M.</strong> since 9:00 AM. Your Bill4Time entry is open and the timer is running.',
+      situationClass: '',
+      prompt: '❓ <strong>Your phone is ringing — Patel, R. is calling.</strong> Before you answer, you need to stamp the end time on Task A. Click the correct button below.',
+      correctBtn: 'gettime',
+      correctFeedback: '✓ Correct! Clicking <strong>Get Time</strong> stamps the current time as the end time on your open Task A entry — so the work you completed is accurately recorded before you switch tasks.',
+      wrongFeedback: '✕ Not quite. You need to stamp the end time on your open entry before switching tasks. Click <strong>Get Time</strong> to capture the current time.',
+      formUpdate: () => {
+        document.getElementById('endField').textContent = '10:22am';
+        document.getElementById('endField').className = 'f-input highlight';
+        document.getElementById('laborField').textContent = '1.37';
+        document.getElementById('laborField').className = 'f-input filled';
+        document.getElementById('billableField').textContent = '1.37';
+        document.getElementById('billableField').className = 'f-input filled';
+        document.getElementById('timerDisplay').textContent = '▶ 01:22:14';
+      }
+    },
+    {
+      counter: 'Step 2 of 6 — Task A: Save & Close',
+      counterClass: '',
+      icon: '💾',
+      situation: 'Get Time has stamped <strong>10:22am</strong> as the end time on Task A. The entry is complete and ready to save.',
+      situationClass: '',
+      prompt: '❓ <strong>Task A is fully filled in.</strong> You need to close this entry so you can open a new one for the client call. Click the correct button.',
+      correctBtn: 'saveclose',
+      correctFeedback: '✓ Correct! <strong>Save & Close</strong> saves Task A and closes the form. Task A is now fully logged and you are free to handle the interruption.',
+      wrongFeedback: '✕ Not quite. Task A is complete — you need to save and close it before opening a new entry. Click <strong>Save & Close</strong>.',
+      formUpdate: () => {}
+    },
+    {
+      counter: 'Step 3 of 6 — Task B: Open New Entry',
+      counterClass: 'interrupt-bar',
+      icon: '📞',
+      situation: 'Task A is saved. <strong>Patel, R. is on the phone</strong> — you need to open a new time entry to log this inbound client call.',
+      situationClass: 'interrupt',
+      prompt: '❓ <strong>Task A is closed.</strong> You need to start a fresh entry for the urgent task. Click the correct button to open a new entry.',
+      correctBtn: 'addtime',
+      correctFeedback: '✓ Correct! <strong>Add Time</strong> opens a brand new time entry form. Fill in the client (Patel, R.), matter, and activity (Client Communication) for the call.',
+      wrongFeedback: '✕ Not quite. You need to open a brand new entry for the interrupting task. Click <strong>Add Time</strong>.',
+      formUpdate: () => {
+        document.getElementById('clientField').textContent = 'Patel, R.';
+        document.getElementById('clientField').className = 'f-input blue-val';
+        document.getElementById('matterField').textContent = 'SLS-2026-0389';
+        document.getElementById('activityField').textContent = 'Client Communication';
+        document.getElementById('descField').textContent = 'Responded to inbound client call for Matter SLS-2026-0389 (Patel, Rajesh); discussed case status and outstanding documentation required.';
+        document.getElementById('startField').textContent = '10:22am';
+        document.getElementById('endField').textContent = 'running…';
+        document.getElementById('endField').className = 'f-input running';
+        document.getElementById('laborField').textContent = '—';
+        document.getElementById('laborField').className = 'f-input empty-dash';
+        document.getElementById('billableField').textContent = '—';
+        document.getElementById('billableField').className = 'f-input empty-dash';
+        document.getElementById('timerDisplay').textContent = '▶ 00:00:00';
+      }
+    },
+    {
+      counter: 'Step 4 of 6 — Task B: Stamp End Time',
+      counterClass: 'interrupt-bar',
+      icon: '📞',
+      situation: 'The call with <strong>Patel, R.</strong> is finished. Your Task B entry is open with a start time of 10:22am. You need to stamp the end time.',
+      situationClass: 'interrupt',
+      prompt: '❓ <strong>The call is over.</strong> Stamp the end time on Task B before saving. Click the correct button.',
+      correctBtn: 'gettime',
+      correctFeedback: '✓ Correct! <strong>Get Time</strong> stamps 10:45am as the end time on Task B. Now you can fill in any remaining fields and save the entry.',
+      wrongFeedback: '✕ Not quite. You need to capture the end time for this entry. Click <strong>Get Time</strong>.',
+      formUpdate: () => {
+        document.getElementById('endField').textContent = '10:45am';
+        document.getElementById('endField').className = 'f-input highlight';
+        document.getElementById('laborField').textContent = '0.38';
+        document.getElementById('laborField').className = 'f-input filled';
+        document.getElementById('billableField').textContent = '0.38';
+        document.getElementById('billableField').className = 'f-input filled';
+      }
+    },
+    {
+      counter: 'Step 5 of 6 — Task B: Save & Close',
+      counterClass: 'interrupt-bar',
+      icon: '💾',
+      situation: 'Task B is fully filled in — client, matter, activity, description, start time <strong>10:22am</strong>, end time <strong>10:45am</strong>. Ready to save.',
+      situationClass: 'interrupt',
+      prompt: '❓ <strong>Task B is complete.</strong> Save it and return to Task A. Click the correct button.',
+      correctBtn: 'saveclose',
+      correctFeedback: '✓ Correct! Task B — the client call — is now fully logged. Time to return to Task A and resume where you left off.',
+      wrongFeedback: '✕ Not quite. Task B is complete and ready to be saved. Click <strong>Save & Close</strong>.',
+      formUpdate: () => {}
+    },
+    {
+      counter: 'Step 6 of 6 — Task A: Resume',
+      counterClass: 'resume-bar',
+      icon: '🔄',
+      situation: 'Task B is saved. You are back to your <strong>original Task A window</strong> (Medical Record Review, Hernandez, M.). You need to resume with a new start time.',
+      situationClass: '',
+      prompt: '❓ <strong>You are ready to continue Task A.</strong> Open a new entry for the remaining work. Click the correct button to resume.',
+      correctBtn: 'addtime',
+      correctFeedback: '✓ Correct! <strong>Add Time</strong> opens a new entry for Task A with a fresh start time of 10:45am — the moment you resumed. Task A will now have two entries that together capture all the time you worked.',
+      wrongFeedback: '✕ Not quite. You need to open a new entry to continue Task A from where you left off. Click <strong>Add Time</strong>.',
+      formUpdate: () => {
+        document.getElementById('clientField').textContent = 'Hernandez, M.';
+        document.getElementById('matterField').textContent = 'SLS-2026-0441';
+        document.getElementById('activityField').textContent = 'Medical Rec. Review';
+        document.getElementById('descField').textContent = 'Reviewed medical records received from treating physician for Matter SLS-2026-0441 (Hernandez, Maria); updated Medical History tab in Litify and drafted medical record summary.';
+        document.getElementById('startField').textContent = '10:45am';
+        document.getElementById('endField').textContent = 'running…';
+        document.getElementById('endField').className = 'f-input running';
+        document.getElementById('laborField').textContent = '—';
+        document.getElementById('laborField').className = 'f-input empty-dash';
+        document.getElementById('billableField').textContent = '—';
+        document.getElementById('billableField').className = 'f-input empty-dash';
+        document.getElementById('timerDisplay').textContent = '▶ 00:00:00';
+      }
+    }
+  ];
+
+  let currentStep = 0;
+  let answered = false;
+
+  const correctMap = { 0:'gettime', 1:'saveclose', 2:'addtime', 3:'gettime', 4:'saveclose', 5:'addtime' };
+  const btnIds = { saveclose:'btnSaveClose', savenew:'btnSaveNew', savedup:'btnSaveDup', gettime:'btnGetTime', addtime:'btnAddTime', cancel:'btnCancel' };
+  // btnGetTime is inline next to End Time — still included in btnIds for disable/highlight logic
+
+  function applyStep(idx) {
+    const s = steps[idx];
+    answered = false;
+
+    // Counter bar
+    const counter = document.getElementById('stepCounter');
+    counter.textContent = s.counter;
+    counter.className = 'step-counter ' + (s.counterClass || '');
+
+    // Situation
+    document.getElementById('situationBar').className = 'situation-bar';
+    document.getElementById('situationText').innerHTML = s.situation;
+    document.getElementById('situationText').className = 'situation-text ' + (s.situationClass || '');
+
+    // Prompt
+    document.getElementById('promptBox').innerHTML = '<span class="q-icon">' + s.prompt;
+
+    // Reset feedback
+    const fb = document.getElementById('feedbackToast');
+    fb.style.display = 'none';
+    fb.className = 'feedback-toast';
+    fb.innerHTML = '';
+
+    // Reset buttons
+    Object.values(btnIds).forEach(id => {
+      const btn = document.getElementById(id);
+      btn.disabled = false;
+      btn.classList.remove('correct-target');
+    });
+
+    // Highlight correct button
+    document.getElementById(btnIds[correctMap[idx]]).classList.add('correct-target');
+
+    // Hide next
+    document.getElementById('nextBtn').style.display = 'none';
+
+    // Progress
+    const pct = (idx / steps.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressLabel').textContent = 'Step ' + (idx+1) + ' of ' + steps.length;
+  }
+
+  function handleClick(btn) {
+    if (answered) return;
+    answered = true;
+
+    const correct = correctMap[currentStep];
+    const fb = document.getElementById('feedbackToast');
+    const s = steps[currentStep];
+
+    // Disable all buttons
+    Object.values(btnIds).forEach(id => {
+      document.getElementById(id).disabled = true;
+      document.getElementById(id).classList.remove('correct-target');
+    });
+
+    if (btn === correct) {
+      fb.className = 'feedback-toast correct';
+      fb.innerHTML = '<strong>' + s.correctFeedback;
+      fb.style.display = 'block';
+      s.formUpdate();
+    } else {
+      fb.className = 'feedback-toast wrong';
+      fb.innerHTML = '<strong>' + s.wrongFeedback;
+      fb.style.display = 'block';
+      // Show correct button still highlighted after wrong
+    }
+
+    // Show next / finish
+    const nextBtn = document.getElementById('nextBtn');
+    nextBtn.style.display = 'inline-block';
+    if (currentStep === steps.length - 1) {
+      nextBtn.textContent = 'See Results →';
+    } else {
+      nextBtn.textContent = 'Continue to next step →';
+    }
+  }
+
+  function nextStep() {
+    currentStep++;
+    if (currentStep >= steps.length) {
+      showComplete();
+    } else {
+      applyStep(currentStep);
+    }
+  }
+
+  function showComplete() {
+    document.getElementById('scenarioCard').style.display = 'none';
+    document.getElementById('progressFill').style.width = '100%';
+    document.getElementById('progressLabel').textContent = 'Complete!';
+    document.getElementById('completeCard').style.display = 'block';
+  }
+
+  function restart() {
+    currentStep = 0;
+    document.getElementById('scenarioCard').style.display = 'block';
+    document.getElementById('completeCard').style.display = 'none';
+
+    // Reset form
+    document.getElementById('clientField').textContent = 'Hernandez, M.';
+    document.getElementById('matterField').textContent = 'SLS-2026-0441';
+    document.getElementById('activityField').textContent = 'Medical Rec. Review';
+    document.getElementById('descField').textContent = 'Reviewed medical records received from treating physician for Matter SLS-2026-0441 (Hernandez, Maria); updated Medical History tab in Litify and drafted medical record summary.';
+    document.getElementById('startField').textContent = '9:00am';
+    document.getElementById('endField').textContent = 'running…';
+    document.getElementById('endField').className = 'f-input running';
+    document.getElementById('laborField').textContent = '—';
+    document.getElementById('laborField').className = 'f-input empty-dash';
+    document.getElementById('billableField').textContent = '—';
+    document.getElementById('billableField').className = 'f-input empty-dash';
+    document.getElementById('timerDisplay').textContent = '▶ 01:22:14';
+
+    applyStep(0);
+  }
+
+  // Init
+  applyStep(0);
+</script>
+</body>
+</html>
